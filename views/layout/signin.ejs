@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+
+<div class="modal fade" id="signin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="top:15%;">
+	<div class="modal-dialog modal-md">
+	  <div class="modal-content">
+		<div class="modal-body"  style="overflow-x:hidden;overflow:auto;">
+			<div class="col-lg-10 col-lg-offset-1">
+				<div class="page-header">
+					<h2>Sign In</h2>
+				</div>
+				<!-- form -->
+				<form id="signinform" data-toggle="validator">
+					<div class="form-group">
+						<label class="control-label">Username</label>
+						<input type="text" class="form-control" name="username" placeholder="Username" required>
+						<div class="help-block with-errors"></div>
+					</div>
+					<div class="form-group">
+						<label class="control-label">Password</label>
+						<input type="password" class="form-control" name="password" placeholder="Password" required>
+						<div class="help-block with-errors"></div>
+					</div>
+					<div class="form-group">
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</div>
+				</form>
+				
+				<!-- Previous 
+				<form id="signinForm" class="form-horizontal">
+					<div class="form-group">
+						<label class="col-lg-3 control-label">Username</label>
+						<div class="col-lg-7">
+							<input type="text" class="form-control" name="username" />
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-lg-3 control-label">Password</label>
+						<div class="col-lg-7">
+							<input type="password" class="form-control" name="password" />
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-lg-7 col-lg-offset-3">
+							<div id="msg_signin" style></div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-lg-9 col-lg-offset-3">
+							<button type="submit" class="btn btn-primary">Sign In</button>
+						</div>
+					</div>
+					
+				</form>-->
+				<!-- form -->
+			</div>
+		</div>
+	  </div>
+	</div>
+</div>
+	
+<script type="text/javascript">
+$('#signinform').validator().on('submit', function (e) {
+  if (e.isDefaultPrevented()) {
+    // handle the invalid form...
+  } else {
+    // everything looks good!
+	$.post("/signin", {username:$('#signinform input[name="username"]').val(), password:$('#signinform input[name="password"]').val()}, function(data){
+		console.log(data);
+		if(data.message == 'success')
+			location.href ="/";
+		else
+			alert(data.message);
+	});
+	return false;
+  }
+})
+</script>
+<!-- <script type="text/javascript">
+$(document).ready(function() {
+    $('#signinForm')
+        .formValidation({
+            message: 'This value is not valid',
+            icon: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                username: {
+                    message: 'The username is not valid',
+                    validators: {
+                        notEmpty: {
+                            message: 'The username is required and can\'t be empty'
+                        },
+                        stringLength: {
+                            min: 6,
+                            max: 30,
+                            message: 'The username must be more than 6 and less than 30 characters long'
+                        },
+                        /*remote: {
+                            url: 'remote.php',
+                            message: 'The username is not available'
+                        },*/
+                        regexp: {
+                            regexp: /^[a-zA-Z0-9_\.]+$/,
+                            message: 'The username can only consist of alphabetical, number, dot and underscore'
+                        }
+                    }
+                },
+                password: {
+                    validators: {
+                        notEmpty: {
+                            message: 'The password is required and can\'t be empty'
+                        }
+                    }
+                }
+            }
+        })
+        .on('success.form.fv', function(e) {
+            // Prevent form submission
+            e.preventDefault();
+
+            // Get the form instance
+            var $form = $(e.target);
+
+            // Get the FormValidation instance
+            var bv = $form.data('formValidation');
+
+            // Use Ajax to submit form data
+            $.post("/signin", $form.serialize())
+				.done(function(data){
+					if(data.message == "success"){
+						$("#msg_signin").html("");
+						location.reload();
+					}else{
+						$("#msg_signin").html("<p style='color: #a94442; font-size: 85%; font-weight: 500;'>Incorrect username or password! Please input again!</p>");
+					}
+				});
+        });
+});
+</script> -->

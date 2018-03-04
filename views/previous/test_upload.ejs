@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!-- release v4.3.2, copyright 2014 - 2015 Kartik Visweswaran -->
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Krajee JQuery Plugins - &copy; Kartik</title>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/fileinput.css" media="all" rel="stylesheet" type="text/css" />
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="js/fileinput.js" type="text/javascript"></script>
+        <script src="js/locales/fr.js" type="text/javascript"></script>
+        <script src="js/locales/es.js" type="text/javascript"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <label class="control-label">Select File</label>
+<input id="input-pr" name="input-pr[]" type="file" multiple class="file-loading">
+<script>
+$.get("/getmyphoto")
+	.done(function(data){
+		console.log(data);
+		var list = new Array(),
+			list2 = new Array();
+		data.forEach(function(val, key){
+			list.push('<img src='+ val.url +' class="kv-preview-data file-preview-image" style="height:160px">');
+			list2.push({caption: val.title, url: "/inactivephoto", key: val._id});
+		});
+		
+		
+		console.log(list);
+		console.log(list2);
+		$("#input-pr").fileinput({
+			//uploadUrl: "/file-upload-batch/1",
+			showClose: false,
+			showCaption: false,
+			showBrowse: false,
+			showUpload: false,
+			showRemove: false,
+			showZoom: false,
+			browseOnZoneClick: false,
+			uploadAsync: false,
+			minFileCount: 2,
+			maxFileCount: 5,
+			overwriteInitial: false,			
+			initialPreview: list,
+			initialPreviewAsData: false, // allows you to set a raw markup
+			initialPreviewFileType: 'image', // image is the default and can be overridden in config below
+			initialPreviewConfig: list2,
+			layoutTemplates: {actionUpload: ''},
+			uploadExtraData: {
+				img_key: "1000",
+				img_keywords: "happy, nature",
+			}
+		}).on('filepredelete', function(e, params) {
+			console.log('File sorted params', params)
+		}).on('filezoomshow', function(event, params) {
+			$('#params.sourceEvent')
+			console.log('File zoom show ', params.sourceEvent, params.previewId, params.modal);
+		});
+		
+	});
+
+
+</script>
+    </body>
+</html>

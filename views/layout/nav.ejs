@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<nav class="navbar navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand  brand-discolor" href="/">ISmartTrip</a>
+    </div>
+		<div class="navbar-form navbar-left">
+			<div class="input-group">
+			<input id="search-field" class="form-control" type="text" placeholder="Search">
+			<span class="input-group-btn">
+				<button id="search-btn" class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
+			</span>
+			</div>
+		</div>
+    <ul class="nav navbar-nav navbar-right">
+			<% if(!user) {%>
+			<li class="nav-item">
+			<button class="btn btn-default btn-sm navbar-btn text-uppercase" data-toggle="modal" data-target="#signin">
+				<i class="fa fa-sign-in"></i>&nbspsign in
+			</button>
+			<button class="btn btn-primary btn-sm navbar-btn text-uppercase" data-toggle="modal" data-target="#register">
+				<i class="fa fa-user"></i>&nbspsign Up
+			</button>
+			</li>
+			<% } else { %>
+			<li class="nav-item">
+				<img id="nav-avatar" src="<%= user.photo %>" class="img-thumbnail navbar-btn"/>
+				  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><%= user.name.first + " " + user.name.last %>
+					<span class="caret"></span></button>
+					<ul class="dropdown-menu">
+						<li class="dropdown-header">Profile</li>
+						<li><a onclick="loadProfile();">My Profile</a></li>
+						<li><a onclick="loadProfileUpdate();">Update Profile</a></li>
+						<li><a onclick="$('#updateAvatar').modal('show');">Update Avatar</a></li>
+						<li><a onclick="loadPasswordUpdate()">Change Password</a></li>
+						<li class="divider"></li>
+						<li class="dropdown-header">Photo</li>
+						<li><a onclick="">Manage Photo</a></li>
+						<li class="divider"></li>
+						<li><a href="/signout">Sign out</a></li>
+					</ul>
+			</li>
+			<% } %>
+		</ul>
+  </div>
+</nav>
+
+<style>
+#nav-avatar{
+	width:2.5em;height:2.5em;
+}
+#nav-name{
+	font-size:1.25em;
+}
+
+/* Brand */
+.brand-discolor {
+	animation:discolor 10s;
+	animation-iteration-count: infinite;
+} 
+@-webkit-keyframes discolor /* Safari and Chrome */
+{
+	0%   {color:red;}
+	25%  {color:orange;}
+	50%  {color:yellow;}
+	75%  {color:black;}
+	100% {color:red;}
+}
+
+</style>
+<script>
+</script>

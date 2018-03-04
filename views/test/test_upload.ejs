@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!-- release v4.4.0, copyright 2014 - 2017 Kartik Visweswaran -->
+<!--suppress JSUnresolvedLibraryURL -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Krajee JQuery Plugins - &copy; Kartik</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/fileinput.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="../themes/explorer/theme.css" media="all" rel="stylesheet" type="text/css"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="../js/plugins/sortable.js" type="text/javascript"></script>
+    <script src="../js/fileinput.js" type="text/javascript"></script>
+    <script src="../js/locales/fr.js" type="text/javascript"></script>
+    <script src="../js/locales/es.js" type="text/javascript"></script>
+    <script src="../js/locales/zh.js" type="text/javascript"></script>
+    <script src="../themes/explorer/theme.js" type="text/javascript"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript"></script>
+</head>
+<body>
+<div class="container kv-main">
+    <input id="input-ke-1" name="inputKE1[]" type="file" multiple class="file-loading" accept="image">
+</div>
+</body>
+<script>
+navigator.geolocation.getCurrentPosition(function(position) {
+	console.log(position.coords.latitude, position.coords.longitude);
+});
+var out = {abc: 1};
+var k = 0;
+$("#input-ke-1").fileinput({
+		language: 'zh',
+    theme: "explorer",
+    uploadUrl: "/test_upload",
+    allowedFileExtensions: ['jpg', 'png', 'gif'],
+		layoutTemplates: {
+			actions: '<div class="file-actions">\n' +
+						'    <div class="file-footer-buttons">\n' +
+						'        {delete} {zoom}' +
+						'    </div>\n' + 
+						'		</div>\n'
+		},
+    overwriteInitial: false,
+		uploadExtraData: function() {  // callback example
+			if(k == 0){
+				out.abc = out.abc + 'a';
+				return out;
+			}else
+				return out;
+
+    }
+		//uploadExtraData: {id:'kv-1'}
+});
+</script>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"> 
+<title>(runoob.com)</title>
+<script src="js/exif.js"></script>
+<script src="js/jquery-1.12.3.min.js"></script>
+</head>
+<body>
+<img id="img1" src="img/IMG_3740.JPG" exif='true'>
+<script>
+document.getElementById("img1").onclick = function() {
+    EXIF.getData(this, function() {
+        console.log(EXIF.pretty(this));
+		var lat = EXIF.getTag(this, 'GPSLatitude');
+		var lon = EXIF.getTag(this, 'GPSLongitude');
+		var latRef = EXIF.getTag(this, 'GPSLatitudeRef');
+		var lonRef = EXIF.getTag(this, 'GPSLongitudeRef');
+		lat = (lat[0] + lat[1]/60 + lat[2]/3600) * (latRef == "N" ? 1 : -1);  
+        lon = (lon[0] + lon[1]/60 + lon[2]/3600) * (lonRef == "W" ? -1 : 1);
+			
+		console.log(lat + ',' + lon);
+    });
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<div class="modal fade" id="updatephoto" tabindex="-1" role="dialog" 
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog modal-lg">
+	  <div class="modal-content" style="max-height:880px;overflow-x:hidden;overflow:auto;">
+		 <div class="modal-body">
+			<!-- form: -->
+			<div class="col-lg-10 col-lg-offset-1">
+				<div class="page-header">
+					<h2>Update Photos</h2>
+				</div>
+				<input id="input-pr" name="input-pr[]" type="file" multiple class="file-loading">
+					
+			</div>
+			<!-- form -->
+		 </div>
+	  </div>
+	</div>
+</div>	
+<script>
+var loadMyPhotos = function(){
+	$('#updatephoto').modal('show');
+};
+/*
+$.get("/getmyphoto")
+	.done(function(data){
+		console.log(data);
+		var list = new Array(),
+			list2 = new Array();
+		data.forEach(function(val, key){
+			list.push('<img src='+ val.url +' class="kv-preview-data file-preview-image" style="height:120px">');
+			list2.push({caption: val.title, url: "/inactivephoto", key: val._id});
+		});
+		
+		
+		console.log(list);
+		console.log(list2);
+		$("#input-pr").fileinput({
+			//uploadUrl: "/file-upload-batch/1",
+			showClose: false,
+			showCaption: false,
+			showBrowse: false,
+			showUpload: false,
+			showRemove: false,
+			browseOnZoneClick: true,
+			uploadAsync: false,
+			minFileCount: 2,
+			maxFileCount: 5,
+			overwriteInitial: false,			
+			initialPreview: list,
+			initialPreviewAsData: false, // allows you to set a raw markup
+			initialPreviewFileType: 'image', // image is the default and can be overridden in config below
+			initialPreviewConfig: list2,
+			uploadExtraData: {
+				img_key: "1000",
+				img_keywords: "happy, nature",
+			}
+		}).on('filepredelete', function(e, params) {
+			console.log('File sorted params', params);
+		});		
+		
+	});
+*/
+</script>

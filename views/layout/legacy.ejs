@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<script>
+/*
+$.post("/signin", {username:'svenchen', password:'123456'})
+.done(function(data){
+	
+});
+*/
+var loadAlbumList = function(album_id){
+	$.get('/findalbums', function(data){
+		$('#managealbum ul[name="album_list"]').empty();
+		for(var i in data){
+			if(data[i]._id == album_id)
+				$('#managealbum ul[name="album_list"]').append('<li style="margin:5px;"><button type="button" class="btn btn-primary active" style="width:80%;" value="' + data[i]._id + '" onclick="showPhotos(' + "'" +  data[i]._id + "'" + ');">' + data[i].name + '</button></li>');
+			else
+				$('#managealbum ul[name="album_list"]').append('<li style="margin:5px;"><button type="button" class="btn btn-primary" style="width:80%;" value="' + data[i]._id + '" onclick="showPhotos(' + "'" +  data[i]._id + "'" + ');">' + data[i].name + '</button></li>');
+		}
+	});
+};
+
+var createAlbum = function(){
+	$('#managealbum div[name="right-block"]').empty();
+	$('#managealbum div[name="right-block"]').append('<div class="page-header">\
+							<h2>Create New Album</h2>\
+						</div>\
+						<form id="createnewalbum" class="form-horizontal"\
+							  data-fv-message="This value is not valid"\
+							  data-fv-icon-valid="glyphicon glyphicon-ok"\
+							  data-fv-icon-invalid="glyphicon glyphicon-remove" \
+							  data-fv-icon-validating="glyphicon glyphicon-refresh" enctype="multipart/form-data" method="post" accept-charset="utf-8"> \
+							<div class="form-group"> \
+								<label class="col-lg-3 control-label">Name</label> \
+								<div class="col-lg-4"> \
+									<input type="text" class="form-control" name="name" placeholder="First name" required data-fv-notempty-message="The name is required and cannot be empty" /> \
+								</div> \
+							</div> \
+							<div class="form-group">\
+								<label class="col-lg-3 control-label">Genres</label>\
+								<div class="col-lg-4">\
+									<select class="form-control" name="genres" multiple="multiple" style="height: 150px;">\
+										<option value="" disabled>Choose genres</option>\
+										<option value="downtown">Downtown</option>\
+										<option value="park">Park</option>\
+										<option value="lake">Lake</option>\
+										<option value="river">River</option>\
+										<option value="beach">Beach</option>\
+									</select>\
+								</div>\
+							</div>\
+							<div class="form-group">\
+								<label class="col-lg-3 control-label">Description</label>\
+								<div class="col-lg-5">\
+									<textarea class="form-control" rows="4" name="description" type="text"\
+											data-fv-stringlength="true" data-fv-stringlength-max="250" data-fv-stringlength-message="The description must be less than 250 characters long"\
+											required data-fv-notempty-message="The description is required and cannot be empty"></textarea>\
+								</div>\
+							</div>\
+							<div class="form-group">\
+								<div class="col-lg-9 col-lg-offset-3">\
+									<button type="submit" class="btn btn-primary">Create</button>\
+								</div>\
+							</div>\
+						</form>');
+
+	$('#createnewalbum')
+	.formValidation()
+	.on('success.form.fv', function(e) {
+		// Prevent form submission
+		e.preventDefault();
+
+		// Get the form instance
+		var $form = $(e.target);
+
+		// Get the FormValidation instance
+		var bv = $form.data('formValidation');
+
+		// Use Ajax to submit form data
+		$.post("/createablum", $(this).serializeArray())
+			.done(function(data){
+				loadAlbumList(data._id);
+				uploadPhotos(data._id);
+				console.log(data);
+			});
+		$form
+			.formValidation('disableSubmitButtons', false)
+			.formValidation('resetForm', true);
+
+	});							
+};			
+
+var uploadPhotos = function(ablum_id){
+	console.log($('ul li button:last').text());
+	$('#managealbum div[name="right-block"]').empty();
+	$('#managealbum div[name="right-block"]').append('<div class="page-header">\
+															<h2>Add Photos</h2>\
+														</div>\
+														<div class="col-lg-12">\
+															<input id="uploadphotos" name="inputFile" type="file" accept="image/*" multiple class="file-loading">\
+														</div>');
+	
+	$("#uploadphotos").fileinput({
+		uploadUrl: "/uploadphotos", // server upload action
+		autoReplace: true,
+		uploadAsync: true,
+		maxFileCount: 15,
+		previewFileType: "image",
+		showCaption: true,
+		showRemove: true,
+		showUpload: true,
+		
+		browseClass: "btn btn-success",
+		browseLabel: "Pick Image",
+		browseIcon: "<i class=\"glyphicon glyphicon-picture\"></i> ",
+		removeClass: "btn btn-danger",
+		removeLabel: "Clear",
+		removeIcon: "<i class=\"glyphicon glyphicon-trash\"></i> ",
+		uploadClass: "btn btn-info",
+		uploadLabel: "Upload",
+		uploadIcon: "<i class=\"glyphicon glyphicon-upload\"></i>",
+		layoutTemplates: {actionUpload: ''},
+		uploadExtraData: {id_album: ablum_id}
+		/*
+		function(){
+			
+			var data = {title: $("#addphoto [name='title']").val(), 
+							geo: $("#addphoto [name='geo']").val(), 
+							genres: $("#addphoto [name='genres[]']").val(),
+							description: $("#addphoto [name='description']").val()};
+			
+			return data;
+		}
+		*/
+	})
+	.on('fileuploaded', function(event, data, previewId, index) {
+		//$('#addphoto').modal('hide');
+		$('#uploadphotos').fileinput('disable');
+		showPhotos(ablum_id);
+	});
+	
+};
+
+var showPhotos = function(album_id){
+	//console.log(album_id);
+	$.get('/findphotoinablum',{album_id: album_id},function(data){
+			$('#managealbum div[name="right-block"]').empty();
+			$('#managealbum div[name="right-block"]').append('<div class="page-header">\
+																	<h2>Photo Gallery</h2>\
+																</div>\
+																<div class="row">');
+			for(var i in data)
+				$('#managealbum div[name="right-block"]').append('<div class="col-sm-6 col-md-2">\
+																	  <div class="thumbnail">\
+																		 <img src="' + data[i].url + '" \
+																		 alt="">\
+																		 <div class="caption">\
+																				<a href="#" class="btn btn-primary" role="button">\
+																				Delete\
+																				</a> \
+																				<a href="#" class="btn btn-default" role="button" onclick="showModify(' + "'" + data[i]._id + "'" +');" style="margin-left: 20px;">\
+																				Modify\
+																				</a>\
+																		 </div>\
+																	  </div>\
+																   </div>');
+			$('#managealbum div[name="right-block"]').append('</div>');												   
+		});
+};
+
+var showModify = function(photo_id){
+	$('#modifyphoto').modal('show');
+	$('#updatephotoForm [name="id"]').val(photo_id);
+	$.get('/getdetails',{id: photo_id},function(data){
+		$('#updatephotoForm [name="title"]').val(data['title']);
+		$('#updatephotoForm [name="geo"]').val(data['geo']);
+		$('#updatephotoForm [name="description"]').val(data['description']);
+	});
+	
+	$('#updatephotoForm')
+	.formValidation()
+	.on('success.form.fv', function(e) {
+		// Prevent form submission
+		e.preventDefault();
+
+		// Get the form instance
+		var $form = $(e.target);
+
+		// Get the FormValidation instance
+		var bv = $form.data('formValidation');
+
+		// Use Ajax to submit form data
+		var d = $(this).serializeArray();
+		
+		console.log(d);
+		$.post("/updatephoto", d)
+					.done(function(data){
+						console.log(data);
+					});
+		
+		$form
+			.formValidation('disableSubmitButtons', false)
+			.formValidation('resetForm', true);
+		
+		$('#modifyphoto').modal('hide');
+
+	});	
+	
+	$("#modifyphoto [name='geo']").on('click', function(){
+			console.log(1312);
+			var map2 = L.mapbox.map('map2', 'mapbox.streets',{zoomControl: true})
+				.setView([38.5, -78], 6);
+			map2.on('click', function(e){
+				//console.log(e.latlng.lng+','+e.latlng.lat);
+				$("#modifyphoto [name='geo']").val(e.latlng.lat+','+e.latlng.lng);
+			});
+			$("#map2").show();
+	});
+};
+
+
+
+/*
+$('#addphoto').on('hide.bs.modal', function (e) {
+	$(e.target).formValidation('resetForm', true);
+	$('#uploadphotos').fileinput('clear');
+});
+*/
+
+$('#managealbum').on('show.bs.modal', function(){
+	//load album list
+	loadAlbumList();
+});
+
+
+</script>
+<div class="modal fade" id="managealbum" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog" style="width:90%;">
+		<div class="modal-content" style="height:900px;">
+			<div class="modal-body" style="height:100%;">
+				<div class="row" style="height:100%; margin: 5px;">
+					<div class="col-lg-2" style="height:100%; border:3px solid black;">
+						Album List
+						<ul name='album_list'>
+						</ul>
+						<button class="btn btn-default btn-default" style="position: absolute;bottom: 5px; width:90%;" onclick="createAlbum();">
+							<span class="glyphicon glyphicon-plus-sign"></span> Create New Album
+						</button>
+					</div>
+					<div name="right-block" class="col-lg-10" style="height:100%;border:3px solid black;">
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modifyphoto" tabindex="-1" role="dialog" 
+	   aria-labelledby="myModalLabel" aria-hidden="true" >
+	<div class="modal-dialog modal-lg">
+	  <div class="modal-content">
+		 <div class="modal-body"  style="overflow-x:hidden;overflow:auto;">
+			<!-- form: -->
+			<div class="col-lg-10 col-lg-offset-1">
+					<div class="page-header">
+						<h2>Modify Photo</h2>
+					</div>
+
+					<form id="updatephotoForm" class="form-horizontal"
+						  data-fv-message="This value is not valid"
+						  data-fv-icon-valid="glyphicon glyphicon-ok"
+						  data-fv-icon-invalid="glyphicon glyphicon-remove"
+						  data-fv-icon-validating="glyphicon glyphicon-refresh" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+						<input type="text" class="form-control hide" name="id"/>
+						<div class="form-group">
+							<label class="col-lg-3 control-label">Title</label>
+							<div class="col-lg-8">
+								<input type="text" class="form-control" name="title" placeholder="Title" 
+								required data-fv-notempty-message="The first name is required and cannot be empty" />
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-lg-3 control-label">Geo</label>
+							<div class="col-lg-8">
+								<input type="text" class="form-control" name="geo" placeholder="Location" 
+								required data-fv-notempty-message="The Geo is required and cannot be empty"/>
+							</div>
+						</div>
+						
+						
+						<div class="form-group">
+							<label class="col-lg-3 control-label">Genres</label>
+							<div class="col-lg-8">
+								<select class="form-control" name="genres" multiple="multiple" style="height: 150px;">
+									<option value="" disabled>Choose genres</option>
+									<option value="Downtown">Downtown</option>
+									<option value="Park">Park</option>
+									<option value="Lake">Lake</option>
+									<option value="River">River</option>
+									<option value="Beach">Beach</option>
+									<option value="Nightview">Nightview</option>
+								</select>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-lg-3 control-label">Description</label>
+							<div class="col-lg-8">
+								<textarea class="form-control" rows="4" name="description" type="text"
+								data-fv-stringlength="true" data-fv-stringlength-max="250" data-fv-stringlength-message="The introduction must be less than 250 characters long"
+								required data-fv-notempty-message="The description is required and cannot be empty"></textarea>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<div class="col-lg-9 col-lg-offset-3">
+								<button type="submit" class="btn btn-primary">Update</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			<!-- form -->
+		 </div>
+	  </div>
+	</div>
+</div>

@@ -1,0 +1,22 @@
+<form action="/updateprofile" method="post">
+	birthday: <input type="date" name="birthday"></input><br>
+	occupations: 
+		<select multiple name="occupations">
+			<option value="volvo">Volvo</option>
+			<option value="saab">Saab</option>
+			<option value="opel">Opel</option>
+			<option value="audi">Audi</option>
+		</select><br>
+	citizenships: 
+		<select multiple name="citizenships">
+			<option value="volvo">Volvo</option>
+			<option value="saab">Saab</option>
+			<option value="opel">Opel</option>
+			<option value="audi">Audi</option>
+		</select><br>
+	introduction: <textarea name="introduction"></textarea>,
+	<!-- photo: {type: String, default: 'userphoto_default.jpg', required: true},
+	following: [{type: ObjectId, ref: 'User',unique: true}],
+	status: {type: Number, required: true}, -->
+	<button type="submit">submit</button>
+</form>

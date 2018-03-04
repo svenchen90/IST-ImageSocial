@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<script>
+var loadProfileUpdate = function(){
+	$.get('/getprofile', function(data){
+		$("#updateprofile").modal("show");
+		for(var o in data){
+			if(o == "birthday"){
+				var date = new Date(data[o])
+
+				var day = ("0" + (date.getDate()+1)).slice(-2);
+				var month = ("0" + (date.getMonth() + 1)).slice(-2);
+
+				var bd = date.getFullYear()+"-"+(month)+"-"+(day) ;
+
+				$("#updateProfileForm [name=" + o + "]").val(bd);
+			}else if(o == 'name'){
+				$("#updateProfileForm [name='first_name']").val(data[o].first);
+				$("#updateProfileForm [name='last_name']").val(data[o].last);
+			}else
+				$("#updateProfileForm [name=" + o + "]").val(data[o]);
+		}
+	});
+};
+
+/*
+$(document).ready(function() {
+	$('#updateProfileForm').formValidation()
+	.on('success.form.fv', function(e) {
+				// Prevent submit form
+				e.preventDefault();
+				
+				var $form     = $(e.target),
+					validator = $form.data('formValidation');
+				
+				$.post("/updateprofile", $(this).serializeArray())
+					.done(function(data){
+						console.log(data);
+					});
+
+				// Show the modal
+				var fullName = [validator.getFieldElements('first_name').val(),
+								validator.getFieldElements('last_name').val()].join(' ');
+				
+				$('#updateprofile').modal('hide');
+				
+				$('#register_successful')
+					.find('.welcome').html('Hello ' + fullName +"! You have Updated your profile successfully!").end()
+					.modal('show');
+
+				$form
+					.formValidation('disableSubmitButtons', false);  // Enable the submit buttons
+			});
+			
+});
+*/
+</script>
+<!-- Update Profile Modal -->
+<div class="modal fade" id="updateprofile" tabindex="-1">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-body"  style="max-height:880px;overflow-x:hidden;overflow:auto;">
+			<!-- form: -->
+				<div class="modal-header" style="margin-bottom: 15px;">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Update Profile</h4>
+				</div>
+
+				<form id="updateProfileForm" class="form-horizontal"
+						data-fv-message="This value is not valid"
+						data-fv-icon-valid="glyphicon glyphicon-ok"
+						data-fv-icon-invalid="glyphicon glyphicon-remove"
+						data-fv-icon-validating="glyphicon glyphicon-refresh" action="/updateprofile" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+					<div class="form-group row">
+						<label class="col-lg-3 control-label">Full name</label>
+						<div class="col-lg-4">
+							<input type="text" class="form-control" name="first_name" placeholder="First name" required data-fv-notempty-message="The first name is required and cannot be empty" />
+						</div>
+						<div class="col-lg-4">
+							<input type="text" class="form-control" name="last_name" placeholder="Last name" required data-fv-notempty-message="The last name is required and cannot be empty" />
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<label class="col-lg-3 control-label">Email address</label>
+						<div class="col-lg-5">
+							<input class="form-control" name="email" type="email" data-fv-emailaddress-message="The input is not a valid email address" 
+																required data-fv-notempty-message="The Email is required and cannot be empty"
+																data-fv-remote="true" data-fv-remote-url="/check_avaliability" data-fv-remote-delay="500" data-fv-remote-message="The email is used already" disabled/>
+						</div>
+					</div>
+					
+					<!-- <div class="form-group">
+						<label class="col-lg-3 control-label">Photo</label>
+						<div class="col-lg-5">
+							<input name='inputFile' type='file'  multiple='mutiple'></input>
+						</div>
+					</div> -->
+					
+					
+					<div class="form-group row">
+						<label class="col-lg-3 control-label">Birthday</label>
+						<div class="col-lg-5">
+							<input type="date" class="form-control" name="birthday" data-fv-date="false" data-fv-date-format="MM/DD/YYYY" data-fv-date-message="The birthday is not valid" required data-fv-notempty-message="The birthday is required"/>
+						</div>
+					</div>
+
+					
+					<div class="form-group row">
+						<label class="col-lg-3 control-label">Occupation</label>
+						<div class="col-lg-5">
+							<select class="form-control" name="occupations" >
+								<option value="">-- Select an occupation --</option>
+								<option value="engineer">Engineer</option>
+								<option value="teacher">Teacher</option>
+								<option value="salesman">Salesman</option>
+								<option value="student">Student</option>
+								<option value="other">Other</option>
+							</select>
+						</div>
+					</div>
+					
+					<div class="form-group row">
+						<label class="col-lg-3 control-label">Phone</label>
+						<div class="col-lg-5">
+							<input class="form-control" name="phone" type="text"
+										pattern="^[0-9]{10}$" data-fv-regexp-message="The phone can only consist of 10 digits"
+										required data-fv-notempty-message="The phone is required and cannot be empty"
+										data-fv-remote="true" data-fv-remote-url="/check_avaliability" data-fv-remote-delay="500" data-fv-remote-message="The phone is used already" disabled/>
+						</div>
+					</div>
+					
+					<div class="form-group row">
+						<label class="col-lg-3 control-label">Introduction</label>
+						<div class="col-lg-5">
+							<textarea class="form-control" rows="4" name="introduction" type="text"
+									data-fv-stringlength="true" data-fv-stringlength-max="250" data-fv-stringlength-message="The introduction must be less than 250 characters long"
+									required data-fv-notempty-message="The introduction is required and cannot be empty"></textarea>
+						</div>
+					</div>
+					
+
+					<div class="form-group">
+							<button type="submit" class="btn btn-primary pull-right">Update</button>
+							<button type="submit" class="btn btn-default pull-right" data-dismiss="modal" style="margin-right: 15px;">back</button>
+					</div>
+				</form>
+		 </div>
+	  </div>
+	</div>
+</div>
+<!-- End of Update Profile Modal -->

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<button id="btn-showcard" class="btn btn-secondary">
+<i class="fa fa-chevron-right fa-lg"></i>
+</button>
+<button id="btn-hidecard" class="btn btn-secondary">
+<i class="fa fa-chevron-left fa-lg"></i>
+</button>
+
+
+<div id="left-card" class="panel panel-default">
+	<div class="panel-heading"></div>
+	<div id="result-filter" class="bg-faded"></div>
+	<div id="result-list" class="panel-body">
+	</div>
+</div>
+
+<style>
+#left-card{
+	top: 0;
+	width:385px;
+	position:fixed;
+	display:none;
+}
+#left-card .panel-heading{
+	height:52px;
+}
+#result-filter{
+	height:52px;
+}
+#result-list{
+	padding-bottom: 104px;
+	overflow-y:scroll;
+	position:relative;
+}
+#btn-showcard{
+	height:52px;
+	width:20px;
+	padding:0;
+	position:absolute;
+	top:54px;
+	left:-2px;
+	display:none;
+}
+#btn-hidecard{
+	height:52px;
+	width:20px;
+	padding:0;
+	position:absolute;
+	top:54px;
+	left:382px;
+	display:none;
+}
+</style>
+
+<script src="plugin/slimScroll/jquery.slimscroll.min.js"></script>
+<script>
+
+	$('#result-list').slimScroll({
+		height: '100vh'
+	});
+
+</script>

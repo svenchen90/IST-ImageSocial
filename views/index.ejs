@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ISmartTrip</title>
+	<meta charset='utf-8'/>
+  <meta name='viewport' content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no'/>
+	
+	<!-- BootStrip -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.min.js" integrity="sha384-XTs3FgkjiBgo8qjEjBk0tGmf3wPrWtA6coPfQDfFEY8AnYJwjalXCiosYRBIBZX8" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script> -->
+	
+	<!-- Font Awesome -->
+	<link href="fonts/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+	
+	<!-- Mapbox -->
+	<script src='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.js'></script>
+	<link href='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.css' rel='stylesheet' />
+  <!-- <script src='https://api.tiles.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
+	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' /> -->
+
+	<!-- Others -->
+	<!-- Form Validation -->
+	<script src="http://1000hz.github.io/bootstrap-validator/dist/validator.min.js"></script>
+	<!-- <script src="js/validator.min.js"></script> -->
+	
+	<!-- EXIF -->
+	<script src="js/exif.js"></script>
+	<!-- Previous
+	<link rel="stylesheet" href="css/font-awesome.min.css" />
+	<link rel="stylesheet" href="dist/css/formValidation.css"/>
+	<link rel="stylesheet" type="text/css" href="css/default.css">
+	<script type="text/javascript" src="dist/js/formValidation.js"></script>
+	<script type="text/javascript" src="dist/js/framework/bootstrap.js"></script>
+	<script type="text/javascript" src="dist/js/language/zh_CN.js"></script> -->
+	
+	<!-- Photo Upload -->
+	<link href="css/fileinput.css" media="all" rel="stylesheet" type="text/css" />
+	<script src="js/fileinput.js" type="text/javascript"></script>
+	<script src="js/locales/fr.js" type="text/javascript"></script>
+	<script src="js/locales/es.js" type="text/javascript"></script>
+	
+	<!-- Leaflet Cluster -->
+	<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v1.0.0/leaflet.markercluster.js'></script>
+	<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v1.0.0/MarkerCluster.css' rel='stylesheet' />
+	<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v1.0.0/MarkerCluster.Default.css' rel='stylesheet' />
+</head>
+<body>
+	<!-- Map -->
+	<div id="map"></div>
+	<style>	
+	#map{
+		position:absolute;
+		top:0;
+		bottom:0;
+		width:100%; 
+		}
+	</style>
+	<script>
+		//Initial of Mapbox
+		L.mapbox.accessToken = 'pk.eyJ1Ijoic3ZlbmNoZW4iLCJhIjoiY2ludTBwc2k0MTFkaHRxa2pqZDFrenRxbSJ9.0df0NgCDfQSolkaLSmMIIg';
+		var map = L.mapbox.map('map', 'mapbox.streets',{zoomControl: false});
+		var myLayer = L.mapbox.featureLayer().addTo(map);
+		navigator.geolocation.getCurrentPosition(function(position) {
+			L.marker([
+              position.coords.latitude,
+              position.coords.longitude
+            ]).addTo(map);
+		});
+		//End of Initial
+	</script>
+	<!-- End of Map -->
+	<!-- Nav -->
+	<% include layout/nav %>
+	<!-- End of Nav -->
+	
+
+	
+	<!-- Slides  -->
+	<img id="slides" class="img-thumbnail">	
+	<style>
+	#slides{
+		position: absolute;
+		top: 10%;
+		bottom: 10%;
+		left: 1%;
+		right: 31%;
+		margin: auto;
+		max-width:60%;
+		max-height:80%
+	}
+	</style>
+	<script>
+	</script>
+	<!-- End of Slides -->
+	
+	<!-- Details Panel -->
+	<% include layout/details %>
+	<!-- End of Details Panel -->
+		
+	<!-- Left Panel -->
+	<% include layout/left_panel %>
+	<!-- End of Left Panel -->
+		
+	
+	
+	<!-- Album -->
+	<% include layout/legacy %>
+	<!-- End of Album -->
+	
+	
+	<!-- View Profile -->
+	<% include layout/view_profile %>
+	<!-- End of View Profile -->
+	
+	<!-- Update Profile -->
+	<% include layout/update_profile %>
+	<!-- End of Update Profile -->
+
+	<!-- Update Password -->
+	<% include layout/update_password %>
+	<!-- End of Update Password -->
+	
+	<!-- Add Photo -->
+	<% include layout/add_photo %>
+	<!-- End of Add Photo -->
+	
+	<!-- Update Photo  -->
+	<!-- End of Update Photo -->
+
+	
+	<!-- Sign in Modal -->
+	<% include layout/signin %>
+	<!-- End of Sign in -->
+
+	<!-- Sign up Modal -->
+	<% include layout/signup %>
+	<!-- End of Sign up Modal -->
+
+	<!-- Chat -->
+	<% include layout/chat %>
+	<!-- End of Chat -->	
+	
+	<!-- update_avatar -->
+	<% include layout/update_avatar %>
+	<!-- End of update_avatar -->
+	
+	<!-- manage album -->
+	<% include layout/album %>
+	<!-- End of manage album -->
+	
+	<!-- Success Register -->
+	<div class="modal fade" id="register_successful">
+			<div class="modal-dialog">
+					<div class="modal-content">
+							<div class="modal-body">
+									<div class="text-center">
+				<span class="glyphicon glyphicon-ok-sign" style="font-size:400px;color:	#66ff33;"></span>
+				</div>
+				<div class="text-center welcome">
+				</div>
+							</div>
+					</div>
+			</div>
+	</div>
+	<ul id="rightclickmenu" class="dropdown-menu">
+		<li><a id="btn_addphoto" class="dropdown-item" href="javascript:void(0);">Add a new Photo</a></li>
+		<li class="divider"></li>
+		<li><a class="dropdown-item" href="#">Others</a></li>
+	</ul>
+	<style>
+		.icon-border{
+			border: 5px solid white;
+		}
+		
+		.icon-selected{
+			animation: border-discolor 3s;
+			animation-iteration-count: infinite;
+		}
+		
+		@-webkit-keyframes border-discolor /* Safari and Chrome */
+		{
+			0%  {border-color:red;}
+			12.5% {border-color:orange;}
+			37.5% {border-color:yellow;}
+			62.5%{border-color:orange;}
+			87.5%  {border-color:red;}
+			100%  {border-color:red;}
+		}
+		
+		/*
+		@keyframes animationWave{
+			50% {
+				width : 75px;
+				height : 75px;
+				border-width:5px;
+				opacity : 0.5;
+			}
+
+			100% {
+				width : 100px;
+				height : 100px;
+				border-width:30px;
+				opacity : 0.0;
+		}
+		*/
+		
+	</style>
+
+<script>
+//Initial Slides
+var tout;
+$.get("/search", {search: '', limit:20}, function(data){
+		//to MapBox GeoJson
+		var result = toMapboxJson(data);
+		//clear result-List and layers
+		document.getElementById('result-list').innerHTML = '';
+		myLayer.clearLayers()
+		//Set Json to Layers
+		myLayer.setGeoJSON(result);
+		
+		//Slide Loop
+		var curslide;
+		loop(0,myLayer.getLayers());
+		
+		function loop(i, list){
+			//console.log(list[i]._zIndex);
+			selected = list[i].feature.properties.icon;
+			selected['className'] = selected['className'].replace(/ icon-selected/i, "");
+			list[i].setIcon(L.icon(selected));
+			
+			if(++i > list.length-1)
+				i=0;
+			//map.panTo(list[i].getLatLng(),{animate:true,duration:1});
+			mapFitBoundAtRight(map,markerToBound(list[i]),$("#slides"))
+			
+			$('#slides').attr({'src' : list[i].feature.properties.image});
+			
+			/* Scale
+			var ww = $(window).width()*0.6,
+				wh = $(window).height()*0.8;
+				sw = $('#slides').width();
+				sh = $('#slides').height();
+			if(sw/sh >= ww/wh){
+				$('#slides').height('auto');
+				$('#slides').width(ww);
+			}else{
+				$('#slides').width('auto');
+				$('#slides').height(wh);
+			}
+			End of Scale */
+			
+			select = list[i].feature.properties.icon;
+			select['className'] += " icon-selected";
+			list[i].setIcon(L.icon(select));
+			
+			curslide = i;
+			tout = setTimeout(loop, 2000, i, list);
+		}
+		
+		$('#slides').on('click', function(){
+			$('#slides').hide();
+			clearTimeout(tout);
+			popupDetails(myLayer.getLayers()[curslide]);
+		});
+		
+		$('#search-btn').add(map).add(myLayer).on('click', function(){
+			$('#slides').hide();
+			clearTimeout(tout);
+		});
+	});
+
+//End of Initial
+
+//Search Paginate
+var page=0;
+var perpage=10;
+var tags = [];
+$('#search-btn').click(function(){
+	$('#left-card').show(200,function(){
+		$.get("/paginate_search", {search: $('#search-field').val(), page: 0, perpage: perpage}, function(data){
+			//to mapbox json
+			var result = toMapboxJson(data);
+			//clear result-List and layers
+			document.getElementById('result-list').innerHTML = '';
+			myLayer.clearLayers()
+			//set json
+			myLayer.setGeoJSON(result);
+			map.fitBounds(myLayer.getBounds(),{paddingTopLeft: [$('#left-card').width(),0]});
+			//tags = loadTags([],myLayer);
+		});
+		page=1;
+	});
+	$('#btn-hidecard').show(200);
+	$('#btn-showcard').hide(200);  
+	$('#slides').hide(200);
+	$('#details').hide(200);
+});
+
+$('#result-list').on('scroll', function(){
+	if($(this).scrollTop()+$(this).innerHeight() == $(this)[0].scrollHeight){
+		$.get("/paginate_search", {search: $('#search-field').val(), page: page, perpage: perpage}, function(data){
+			//to mapbox json
+			var result = toMapboxJson(data);
+			//set json
+			
+			//console.log($.merge(myLayer.getGeoJSON(),result));
+			var addOn = L.mapbox.featureLayer(result);
+			
+			addOn.eachLayer(function(layer){
+				myLayer.addLayer(layer);
+			});
+			//myLayer.setGeoJSON(result);
+			map.fitBounds(addOn.getBounds(),{paddingTopLeft: [$('#left-card').width(),0]});
+			//tags = loadTags(tags,addOn);
+			page++;
+		});
+	}	
+});
+
+
+/*
+var loadTags = function(tags,layers){
+	layers.eachLayer(function(layer){
+		$.merge(tags,layer.feature.properties.tag);
+	});
+	tags = $.uniqueSort(tags);
+	$("#left_panel .breadcrumb").empty();
+	$("#left_panel .breadcrumb").append("<li value='All'><a href='#'>All</a></li>")
+	tags.forEach(function(tag){
+		$("#left_panel .breadcrumb").append("<li value='" + tag + "'><a href='#'>" + tag + "</a></li>");
+	});
+	$("#left_panel .breadcrumb li").click(function(){
+			tag = $(this).attr('value');
+			$('#result-list').empty();
+			//console.log(this);
+			myLayer.setFilter(function(feature) {
+				if(tag === "All" || feature.properties.tag.includes(tag)){
+					return true;
+				}else
+					return false;
+			});
+			map.fitBounds(myLayer.getBounds(),{paddingTopLeft: [$('#left_panel').width(),0]});
+		});
+	return tags;
+};
+*/
+
+//Add popup when add layer
+myLayer.on('layeradd', function(e) {
+	var marker = e.layer,
+	feature = marker.feature;
+	marker.setIcon(L.icon(feature.properties.icon));
+ 	//popup
+	var popup = L.popup()
+		.setContent('<img src="' + feature.properties.image + '" style="width:100%;">');
+		
+	marker.bindPopup(popup,{
+        closeButton: false,
+		minWidth: 300
+    });
+	
+	addResultList(marker);
+});
+
+
+//add result-list
+var addResultList = function(marker){
+	var html_card ='<div class="thumbnail"> \
+						<img src="' + marker.feature.properties.image + '"> \
+						<div class="caption"> \
+							<p>' + marker.feature.properties.title + '</p> \
+						</div> \
+					</div>'
+	
+	$(html_card).appendTo("#result-list")
+		.on('mouseover', function(){
+			setTimeout(function(){
+				map.panTo(marker.getLatLng(),{animate:true,duration:1});
+				marker.openPopup();
+			}, 200);
+		})
+		.on('mouseout',function(){
+			setTimeout(function(){
+				marker.closePopup();
+			}, 200);
+		})
+		.on('click',function(){
+			setTimeout(function(){
+				marker.closePopup();
+				popupDetails(marker);
+			}, 200);
+		});
+};
+
+myLayer.on('mouseover', function(e) {
+	e.layer.openPopup();
+	
+});
+
+myLayer.on('mouseout', function(e) {
+	e.layer.closePopup();
+});
+
+myLayer.on('click', function(e) {
+	popupDetails(e.layer);
+});
+
+map.on('click', function(e) {
+	closeDetails();
+});
+
+var closeDetails = function(){
+	if($('#btn-showcard').css('display') != 'none' && $('#details').css('display') != 'none'){
+		$('#left-card').show(200);
+		$('#btn-hidecard').show(200);
+		$('#btn-showcard').hide(200);
+	}
+	$('#details').hide(200);
+	myLayer.eachLayer(function(m){
+		unselect = m.feature.properties.icon;
+		unselect['className'] = unselect['className'].replace(/ icon-selected/i, "");
+		m.setIcon(L.icon(unselect));
+	});
+};
+
+$('#btn-hidecard').click(function(){
+	$('#left-card').hide(200);
+	$(this).hide(200);
+	$('#btn-showcard').show(200);
+});
+
+$('#btn-showcard').click(function(){
+	$('#left-card').show(200);
+	$(this).hide(200);
+	$('#btn-hidecard').show(200);
+	closeDetails();
+	/*
+	myLayer.eachLayer(function(m){
+		unselect = m.feature.properties.icon;
+		unselect['className'] = unselect['className'].replace(/ icon-selected/i, "");
+		m.setIcon(L.icon(unselect));
+	});
+	*/
+});
+
+$('#close-customer').click(function(){
+	$('#customer').hide(200);
+	$('#result-list').show(200);
+});
+
+$('#show-customer').click(function(){
+	$('#customer').show(200);
+	$('#result-list').hide(200);
+	closeDetails();
+});
+
+$('#album .panel').click(function(){
+	album = $(this).attr('album');
+	$('#result-list').empty();
+	myLayer.setFilter(function(feature) {
+		if(feature.properties['album'] === album){
+			return true;
+		}else
+			return false;
+	});
+	$('#customer').hide(200);
+	$('#result-list').show(200);
+});
+
+//UI Toggle controler
+/*
+1. Slide
+2. Details
+3. Search
+*/
+
+map.on('contextmenu', function(e) {
+	//console.log(e.containerPoint.x);
+	//console.log(e.containerPoint.y);
+	//$('#slides').hide();
+	clearTimeout(tout);
+	$('#rightclickmenu').css({'top': e.containerPoint.y+'px', left: e.containerPoint.x+'px'});
+	$("#rightclickmenu #btn_addphoto").attr({'data-lat': e.latlng.lat, 'data-lng': e.latlng.lng});
+	$('#rightclickmenu').show();
+	//addPhoto(e.latlng.lat, e.latlng.lng);
+	//alert(e.latlng)
+});
+
+map.on('click', function(e) {
+	$('#rightclickmenu').hide();
+});
+
+$("#rightclickmenu #btn_addphoto").on("click", function(){
+	var lat = $(this).attr('data-lat');
+	var lng = $(this).attr('data-lng');
+	$('#rightclickmenu').hide();
+	$.get("/islogin", {})
+		.done(function(data){
+			if(data == '0')
+				$('#signin').modal('show');
+			else
+				addPhoto(lat, lng);
+		});
+});
+
+//format data to mapbox json list
+var toMapboxJson = function (data){
+	var result = new Array();
+	data.forEach(function(val, key){
+		var geo = val.geo.split(',');
+		var temp = {
+					"type": "Feature",
+					"geometry": {
+					  "type": "Point",
+					  "coordinates": [geo[1],geo[0]]
+					},
+					"properties": {
+					  "icon": {
+						  "iconUrl": val.url,
+						  "iconSize": [50, 50], // size of the icon
+						  "iconAnchor": [25, 25], // point of the icon which will correspond to marker's location
+						  "popupAnchor": [0, -25], // point from which the popup should open relative to the iconAnchor
+						  "className": "icon-border img-circle"
+					  },
+					  "id" : val._id,
+					  "image" : val.url,
+					  "title" : val.title,
+					  "tag" : val.tags,
+					  "description" : val.description
+					}
+				  };
+		result.push(temp);
+	});
+	return result;
+};
+
+var markerToBound = function(marker){
+	return L.latLngBounds(marker.getLatLng(),marker.getLatLng());
+};
+
+var mapFitBoundAtRight = function(map, bound, leftblock){
+	map.fitBounds(bound, {paddingTopLeft: [leftblock.position().left + leftblock.outerWidth(true),0], maxZoom: 12})
+};
+
+var datetimeReformat = function(str){
+	var datetime = new Date(str);
+	return datetime.getFullYear() + '-' + (datetime.getMonth()+1) + '-' + datetime.getDate() + ' ' +  
+		(datetime.getHours()<10 ? "0"+datetime.getHours() : datetime.getHours()) + ':' + 
+		(datetime.getMinutes()<10 ? "0"+datetime.getMinutes() : datetime.getMinutes()) + ':' + 
+		(datetime.getSeconds()<10 ? "0"+datetime.getSeconds() : datetime.getSeconds());
+};
+
+//myLayer.setGeoJSON(geojson);
+//L.marker([38.913184,-77.031952]).addTo(map);
+//L.marker([37.775408,-78.413682]).addTo(map);
+
+</script>
+</body>
+</html>

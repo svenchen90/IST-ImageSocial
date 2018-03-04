@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<div class="modal fade" id="addphoto" tabindex="-1" role="dialog" 
+	   aria-labelledby="myModalLabel" aria-hidden="true" >
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-body"  style="overflow-x:hidden;overflow:auto;">
+				<!-- form: -->
+					<div class="modal-header" style="margin-bottom: 15px;">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Upload Photo</h4>
+					</div>
+
+					<form class="form-horizontal"
+						  data-fv-message="This value is not valid"
+						  data-fv-icon-valid="glyphicon glyphicon-ok"
+						  data-fv-icon-invalid="glyphicon glyphicon-remove"
+						  data-fv-icon-validating="glyphicon glyphicon-refresh" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+						<div class="form-group row">
+							<label class="col-lg-3 control-label">Title</label>
+							<div class="col-lg-8">
+								<input type="text" class="form-control" name="title" placeholder="Title" 
+								required data-fv-notempty-message="The first name is required and cannot be empty" />
+							</div>
+						</div>
+						
+						<div class="form-group row">
+							<label class="col-lg-3 control-label">Geo</label>
+							<div class="col-lg-8">
+								<input type="text" class="form-control" name="geo" placeholder="Location" 
+								required data-fv-notempty-message="The Geo is required and cannot be empty"/>
+							</div>
+						</div>					
+						
+						<div class="form-group row">
+							<label class="col-lg-3 control-label">Tags</label>
+							<div class="col-lg-8">
+								<select class="form-control" name="tags[]" multiple="multiple" style="height: 150px;">
+									<option value="" disabled>Choose tags</option>
+									<option value="Downtown">Downtown</option>
+									<option value="Park">Park</option>
+									<option value="Lake">Lake</option>
+									<option value="River">River</option>
+									<option value="Beach">Beach</option>
+									<option value="Nightview">Nightview</option>
+								</select>
+							</div>
+						</div>
+						
+						<div class="form-group row">
+							<label class="col-lg-3 control-label">Description</label>
+							<div class="col-lg-8">
+								<textarea class="form-control" rows="4" name="description" type="text"
+								data-fv-stringlength="true" data-fv-stringlength-max="250" data-fv-stringlength-message="The introduction must be less than 250 characters long"
+								required data-fv-notempty-message="The description is required and cannot be empty"></textarea>
+							</div>
+						</div>
+												
+						
+
+						<div class="form-group row">
+							<label class="col-lg-3 control-label">Photo</label>
+							<div class="col-lg-8">
+
+									<input id="input-700" name="inputFile" type="file" accept="image/*" multiple class="file-loading">
+						
+							</div>
+						</div>
+					</form>
+				<!-- form -->
+			</div>
+		</div>
+	</div>
+</div>
+<style>
+#addphoto .form-horizontal .form-group label {
+	margin-left: 15px;
+}
+</style>
+
+<script>
+var addPhoto = function(lat,lng){
+	$('#addphoto [name="title"], #addphoto [name="tags[]"], #addphoto [name="description"]').val('');
+	$('#addphoto #input-700').fileinput('clear');
+	$('#addphoto [name="geo"]').val(lat + ',' + lng);
+	$('#addphoto [name="geo"]').attr('data-mousegeo',lat + ',' + lng);
+	$("#addphoto").modal("show");
+};
+
+$("#input-700").fileinput({
+		uploadUrl: "/uploadphoto", // server upload action
+		autoReplace: true,
+		uploadAsync: true,
+		maxFileCount: 1,
+		previewFileType: "image",
+		showCaption: true,
+		showRemove: true,
+		showUpload: true,
+		
+		browseClass: "btn btn-success",
+		browseLabel: "Pick Image",
+		browseIcon: "<i class=\"glyphicon glyphicon-picture\"></i> ",
+		removeClass: "btn btn-danger",
+		removeLabel: "Clear",
+		removeIcon: "<i class=\"glyphicon glyphicon-trash\"></i> ",
+		uploadClass: "btn btn-info",
+		uploadLabel: "Upload",
+		uploadIcon: "<i class=\"glyphicon glyphicon-upload\"></i>",
+		layoutTemplates: {actionUpload: ''},
+		uploadExtraData: function(){
+			var data = {title: $("#addphoto [name='title']").val(), 
+							geo: $("#addphoto [name='geo']").val(), 
+							tags: $("#addphoto [name='tags[]']").val(),
+							description: $("#addphoto [name='description']").val()};
+			return data;
+		}
+	})
+	.on('fileselect', function(event, numFiles, label) {
+		var pic = $('img[title="' + label + '"]')[0];
+		EXIF.getData(pic, function() {
+			console.log(EXIF.pretty(pic));
+			var lat = EXIF.getTag(pic, 'GPSLatitude');
+			var lon = EXIF.getTag(pic, 'GPSLongitude');
+			var latRef = EXIF.getTag(pic, 'GPSLatitudeRef');
+			var lonRef = EXIF.getTag(pic, 'GPSLongitudeRef');
+			//console.log(lat);
+			if(lat != null){
+				lat = (lat[0] + lat[1]/60 + lat[2]/3600) * (latRef == "N" ? 1 : -1);  
+				lon = (lon[0] + lon[1]/60 + lon[2]/3600) * (lonRef == "W" ? -1 : 1);
+				$("#addphoto [name='geo']").val(lat + ',' + lon);
+			}else
+				$("#addphoto [name='geo']").val($("#addphoto [name='geo']").attr('data-mousegeo'));
+		});
+	})
+	.on('fileuploaded', function(event, data, previewId, index) {
+		//$('#addphoto').modal('hide');
+		$('#input-700').fileinput('disable');
+		
+	})
+	.on('filepredeleted', function(event, key) {
+		console.log('Key = ' + key);
+		//console.log(1231231);
+	});
+	
+	/*
+	$('#addphoto').on('hide.bs.modal', function (e) {
+		$(e.target).formValidation('resetForm', true);
+		$('#input-700').fileinput('clear');
+	});
+	*/
+	/*
+	$("#addphoto [name='geo']").on('click', function(){
+		console.log(1312);
+		var map2 = L.mapbox.map('map2', 'mapbox.streets',{zoomControl: false})
+		.setView([38.5, -78], 6);
+		console.log(1312);
+		$("#map2").show();
+		console.log(1312);
+		map2.on('click', function(e){
+			//console.log(e.latlng.lng+','+e.latlng.lat);
+			$("#addphoto [name='geo']").val(e.latlng.lat+','+e.latlng.lng);
+		});
+	});
+	*/
+</script>

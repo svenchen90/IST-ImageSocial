@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<div id="details" class="panel panel-default">
+	<div class="container-fluid panel-heading">
+		<div class="col-xs-1 px-0">
+			<span id="previous" class="fa fa-angle-left text-white fa-5x"></span>
+		</div>
+		<div class="col-xs-10 px-0">
+			<img id="img-details">
+		</div>
+		<div class="col-xs-1 px-0">
+			<span id="next" class="fa fa-angle-right text-white fa-5x"></span>
+		</div>
+	</div>
+	<ul class="nav nav-tabs">
+		<li class="nav-item">
+			<a class="nav-link" href="#info" data-toggle="tab">
+				<span class="fa fa-list"></span> Information
+			</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="#comment" data-toggle="tab">
+				<span class="fa fa-commenting-o"></span> Comments <span class="tag tag-pill badge"></span>
+			</a>
+		</li>
+		<li class="nav-item pull-right">
+			<a class="nav-link" href="">
+				<span class="fa fa-download"></span> <span class="tag tag-pill tag-default badge">0</span>
+			</a>
+		</li>
+		<li class="nav-item pull-right">
+			<a class="nav-link" href="">
+				<span class="fa fa-heart"></span> <span class="tag tag-pill tag-default badge"></span>
+			</a>
+		</li>
+		<li class="nav-item pull-right">
+			<a class="nav-link" href="">
+				<span class="fa fa-eye"></span> <span class="tag tag-pill tag-default badge"></span>
+			</a>
+		</li>
+	</ul>
+	<div class="panel-body">
+		<div class="tab-content">
+			<div id="info" class="tab-pane media active">
+				<div class="media-left">
+					<a href="#">
+						<img class="media-object rounded-circle">
+					</a>
+				</div>
+				<div class="media-body">
+					<h5 class="media-heading"><a href="#"></a></h5>
+					<h6 class="media-heading"></h6>
+					<p></p>
+				</div>
+				<div class="media-body">
+					<h6 class="media-heading"></h6>
+					<h6 class="media-heading"></h6>
+				</div>
+			</div>
+			<div id="comment" class="tab-pane">
+	
+			</div>
+		</div>
+	</div>
+</div>
+<style>
+#details{
+	position:absolute;
+	width:60%;
+	height:80%;
+	top:100px;
+	left:50px;
+	display:none;
+}
+/* IMG Block */
+#details .container-fluid{
+	height:70%;
+	padding:0;
+}
+#details .panel-heading{
+	background-color: #292b2c;
+}
+#details .panel-heading span{
+	color: #FFFFFF;
+}
+#details .container-fluid div{
+	display:table;
+	height:100%;
+}
+#details .container-fluid div img{
+	max-width:100%;
+	max-height:100%;
+	position:absolute;
+	top:0;
+	bottom:0;
+	left:0;
+	right:0;
+	margin:auto;
+}
+#details .container-fluid div span{
+	display:table-cell;
+	vertical-align:middle;
+}
+#previous{
+	text-align:left;
+}
+#next{
+	text-align:right;
+}
+
+/* Text Block */
+#details .panel-body{
+	padding:0;
+	height:200px;
+	overflow-y:auto;
+}
+#details .panel-body .tab-content{
+	padding:1rem;
+}
+#details .panel-body .tab-content .media-object{
+	width:3rem;
+}
+</style>
+
+
+<script>
+$("#details .close").click(function(){
+	closeDetails();
+});
+var currentmarker;
+var popupDetails = function(marker){
+	if($('#left-card').css('display') != 'none'){
+		$('#left-card').hide(200);
+		$('#btn-hidecard').hide(200);
+		$('#btn-showcard').show(200);
+	}
+	
+	$.get("/getphotodetails", {id: marker.feature.properties.id}, function(data){
+		
+		//load #info
+		$('#img-details').attr({'src':data.url});
+		$('#info .media-left img').attr({'src': data.creator.photo});
+		$('#info .media-body:first h5 a').text(data.creator.name.first + ' ' + data.creator.name.last);
+		$('#info .media-body:first h6').text(data.title);
+		$('#info .media-body:first p').text(data.description);
+		$('#info .media-body:eq(1) .media-heading:first').text("Token On : " + datetimeReformat(data.date));
+		$('#info .media-body:eq(1) .media-heading:eq(1)').text("Tags : ");
+		data.tags.forEach(function(val, key){
+			$('#info .media-body:eq(1) .media-heading:eq(1)').append("<button class='btn btn-primary btn-sm'>" + val + "</button> ")
+		});
+		
+		//load #comment
+		$('#comment').empty();
+		data.comments.forEach(function(val,key){
+			$('#comment').append('<div class="media col-xs-11">\
+									<div class="media-left">\
+										<a href="#">\
+											<img class="media-object rounded-circle" src="' + val.madeby.photo + '">\
+										</a>\
+									</div>\
+									<div class="media-body">\
+										<h6 class="media-heading"><a href="#">' + val.madeby.name.first + '' + val.madeby.name.last + '</a>\
+											<span class="tag tag-pill tag-default">' + datetimeReformat(val.date) + '</span></h6>\
+										<p>' + val.comment + '</p>\
+									</div>\
+								</div>');
+		});
+		
+		$('#comment').append('<div class="media col-xs-9 offset-xs-1">\
+								<div class="media-body">\
+									<textarea class="form-control form-group" rows="3"></textarea>\
+									<button type="submit" class="btn btn-primary form-group float-xs-right" >Submit</button>\
+								</div>\
+							</div>');
+		$('#comment button').on('click',function(){
+			$.post("/makecomment", {id:data._id, comment:$('#comment textarea').val()})
+				.done(function(data){
+					if(data == 'signin')
+						$('#signin').modal('show');
+					else
+						popupDetails(marker);
+				});
+		});
+		
+		$('.fa-commenting-o').next('span').text(data.comments.length);
+		$('.fa-eye').next('span').text(0);
+		$('.fa-heart').next('span').text(data.likes.length);
+	});
+	
+	$('#details').show(400, function(){
+		mapFitBoundAtRight(map,markerToBound(marker),$(this));
+	});
+	
+	myLayer.eachLayer(function(m){
+		unselect = m.feature.properties.icon;
+		unselect['className'] = unselect['className'].replace(/ icon-selected/i, "");
+		m.setIcon(L.icon(unselect));
+	});
+	
+	selected = marker.feature.properties.icon;
+	selected['className'] += " icon-selected";
+	marker.setIcon(L.icon(selected));
+	
+	currentmarker = marker;
+};
+
+$('#previous').click(function(){
+	layers = myLayer.getLayers();
+	index = $.inArray(currentmarker, layers);
+	if(index != -1)
+		popupDetails(layers[(index-1+layers.length)%layers.length]);
+});
+$('#next').click(function(){
+	layers = myLayer.getLayers();
+	index = $.inArray(currentmarker, layers);
+	if(index != -1)
+		popupDetails(layers[(index+1)%layers.length]);
+});
+</script>
